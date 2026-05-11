@@ -27,6 +27,12 @@
             <version>0.0.1</version> <!-- Verifique a versão mais recente -->
         </dependency>
 
+        <dependency>
+            <groupId>net.datafaker</groupId>
+            <artifactId>datafaker</artifactId>
+            <version>2.1.0</version> <!-- Versão atualizada e estável -->
+        </dependency>
+
 
     </dependencies>
 
