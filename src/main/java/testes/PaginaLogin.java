@@ -21,7 +21,7 @@ public class PaginaLogin {
         FirefoxOptions opcoes = new FirefoxOptions();
 
         FirefoxProfile perfil = new FirefoxProfile();
-        // Para o site achar que é um usuário comum
+         // Para o site achar que é um usuário comum
         perfil.setPreference("dom.webdriver.enabled", false);
 
         // Impede que o Firefox carregue extensões internas de automação

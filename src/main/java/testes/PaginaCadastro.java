@@ -2,14 +2,19 @@ package testes;
 
 import net.datafaker.Faker;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.text.Normalizer;
 import java.time.Duration;
 import java.util.Locale;
 
@@ -30,20 +35,20 @@ public class PaginaCadastro {
         // Abafa a detecção de que o navegador é controlado por automação
         perfil.setPreference("general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0");
 
-        // 1. INICIALIZA O GERADOR DE DADOS (Configurado para o Brasil)
+        // Gerador de dados
         Faker faker = new Faker(new Locale("pt", "BR"));
 
-        // Gera os dados aleatórios válidos para ESTA execução específica
         String nomeAleatorio = faker.name().fullName();
         String emailAleatorio = faker.internet().emailAddress();
         String cpfAleatorio = faker.cpf().valid();
         String telefoneAleatorio = faker.phoneNumber().cellPhone();
+        String cepAleatorio = faker.address().zipCode();
 
+        String nomeLimpo = Normalizer.normalize(nomeAleatorio, Normalizer.Form.NFD).replaceAll("[^\\p{IsAlphabetic}\\p{Digit}\\s]", "");
         String cpfLimpo = cpfAleatorio.replace(".", "").replace("-", "");
         String telefoneLimpo = telefoneAleatorio.replace("(", "").replace(")", "").replace(" ", "").replace("-", "");
 
 
-        // Imprime no console quem é o usuário falso desta rodada
         System.out.println("--- DADOS GERADOS PARA ESTE TESTE ---");
         System.out.println("Nome: " + nomeAleatorio);
         System.out.println("E-mail: " + emailAleatorio);
@@ -70,51 +75,73 @@ public class PaginaCadastro {
             WebElement botaoLogin = espera.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()='ENTRAR']")));
             botaoLogin.click();
 
+            // Copia para a área de transferência o CPF gerado
+            StringSelection copiaParaAreaTransferencia = new StringSelection(cpfLimpo);
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(copiaParaAreaTransferencia, null);
+
             WebElement campoCPF = espera.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-testid='cpf-input']")));
-            Thread.sleep(500); // Pausa meio segundo para a máscara "acordar"
+            campoCPF.click();
+            Thread.sleep(500);
 
-            // DIGITAÇÃO HUMANA: Vai enviar um número de cada vez
-            System.out.println("Digitando o CPF humanamente...");
-            for (char numero : cpfLimpo.toCharArray()) {
-                campoCPF.sendKeys(String.valueOf(numero));
-                Thread.sleep(100); // Pausa de 100 milissegundos entre cada número
-            }
-            System.out.println("cpf preenchido");
+            campoCPF.sendKeys(Keys.CONTROL, "v");
 
+            System.out.println("CPF colado com sucesso!");
             Thread.sleep(2000);
 
 
             WebElement campoTelefone = espera.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-testid='mobile-number-input']")));
             campoTelefone.sendKeys(telefoneLimpo);
             System.out.println("telefone preenchido");
-
             Thread.sleep(2000);
 
+            WebElement campoData = espera.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[data-testid='birth-date-input']")));
+            org.openqa.selenium.JavascriptExecutor js = (org.openqa.selenium.JavascriptExecutor) driver;
 
-            WebElement campoData = espera.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-testid='birth-date-input']")));
-            campoData.sendKeys("28032004");
-            System.out.println("data preenchido");
+            // Para burlar o controle de estado do React 16+ e preencher a data, pois da maneira mais convencional estava com bug
+            String scriptBurlarReact =
+                    "var input = arguments[0];" +
+                            "var nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
+                            "nativeSetter.call(input, '2004-03-28');" +
+                            "var evento = new Event('input', { bubbles: true });" +
+                            "input.dispatchEvent(evento);";
 
-            Thread.sleep(2000);
+            js.executeScript(scriptBurlarReact, campoData);
 
+            System.out.println("Data Preenchida");
+            Thread.sleep(1500);
 
             WebElement campoNome = espera.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-testid='complete-name-input']")));
-            campoNome.sendKeys(nomeAleatorio);
+            campoNome.sendKeys(nomeLimpo);
             System.out.println("nome preenchido");
-
             Thread.sleep(2000);
 
 
-            WebElement campoSenha = espera.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-testid='password-input']")));
+            WebElement campoSenha = espera.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-testid='password-input-cpf']")));
             campoSenha.sendKeys("Kabum26.");
-
             Thread.sleep(2000);
 
-            WebElement checkBoxPolitica = espera.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-testid='privacy-policies-checkbox']")));
-            checkBoxPolitica.click();
+            System.out.println("Tentando clicar com o Actions");
 
-            WebElement botaoContinuar = espera.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()='Continuar']")));
-            botaoContinuar.click();
+            WebElement checkBoxPolitica = espera.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[data-testid='privacy-policies-checkbox']")));
+            Actions acoes = new org.openqa.selenium.interactions.Actions(driver);
+            acoes.moveToElement(checkBoxPolitica).click().perform();
+
+            // Para validar o estado do formulário, pois só preencher os campos não basta
+            campoSenha.sendKeys(Keys.TAB);
+            Thread.sleep(2000); // Aguarda o botão processar a liberação
+
+
+            WebElement botaoContinuar = driver.findElement(By.xpath("//button[contains(., 'Continuar')]"));
+            js.executeScript("arguments[0].removeAttribute('disabled');", botaoContinuar);
+            js.executeScript("arguments[0].click();", botaoContinuar);
+
+
+            WebElement campoCep = espera.until(ExpectedConditions.visibilityOfElementLocated(By.name("zipcode")));
+            campoCep.sendKeys("01310900");
+            System.out.println("input preenchido");
+
+            WebElement botaoContinuarAposCep = driver.findElement(By.xpath("//span[contains(., 'Confirmar')]"));
+            botaoContinuarAposCep.click();
 
             Thread.sleep(10000);
 
