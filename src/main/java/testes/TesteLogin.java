@@ -1,7 +1,6 @@
 package testes;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -12,12 +11,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-public class PaginaCarrinho {
+public class TesteLogin {
     public static void main(String[] args) {
+
         FirefoxOptions opcoes = new FirefoxOptions();
 
         FirefoxProfile perfil = new FirefoxProfile();
-        // Para o site achar que é um usuário comum
+         // Para o site achar que é um usuário comum
         perfil.setPreference("dom.webdriver.enabled", false);
 
         // Impede que o Firefox carregue extensões internas de automação
@@ -35,38 +35,31 @@ public class PaginaCarrinho {
         try {
             driver.get("https://www.kabum.com.br");
             WebDriverWait espera = new WebDriverWait(driver, Duration.ofSeconds(10));
-            Thread.sleep(5000);
 
-            WebElement botaoEntrarHeader = espera.until(ExpectedConditions.elementToBeClickable(By.id("linkLoginHeader")));
-            botaoEntrarHeader.click();
+            Thread.sleep(3000);
 
+            WebElement botaoCadastrar = espera.until(ExpectedConditions.presenceOfElementLocated(By.id("linkLoginHeader")));
+            ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", botaoCadastrar);
+
+            // Esse seletor é o mais recomendado pois é único e o mais apropriado para testes
             WebElement campoEmail = espera.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-testid='check-login-input']")));
             campoEmail.sendKeys("mateuscainan14@gmail.com");
-            campoEmail.sendKeys(Keys.ENTER);
-            Thread.sleep(1000);
+
+            WebElement botaoLogin = espera.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()='ENTRAR']")));
+            botaoLogin.click();
 
             String senhaLogin = System.getenv("SENHA_LOGIN_KABUM");
-            WebElement campoSenha = espera.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[type='password']")));
+            WebElement campoSenha = espera.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-testid='password-input']")));
             campoSenha.sendKeys(senhaLogin);
-            campoSenha.sendKeys(Keys.ENTER);
 
-            Thread.sleep(5000);
+            WebElement botaoEntrar = espera.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()='CONTINUAR']")));
+            botaoEntrar.click();
 
-            WebElement btnHardware = espera.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"header-container\"]/header/div/div[2]/div[2]/div/div[2]/div[2]/a[1]")));
-            btnHardware.click();
-
-            WebElement produtoSelecionado = espera.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"listing\"]/div[3]/div/div/div[2]/div/main/a[2]/div[2]/img")));
-            produtoSelecionado.click();
-
-            Thread.sleep(3000);
-
-            WebElement adicionaProdutoAoCarrinho = espera.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"main-content\"]/div[1]/div[1]/div[1]/div[3]/div[2]/div[6]/button[2]")));
-            adicionaProdutoAoCarrinho.click();
-
-            Thread.sleep(3000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
+            // FECHA O NAVEGADOR
             driver.quit();
         }
     }

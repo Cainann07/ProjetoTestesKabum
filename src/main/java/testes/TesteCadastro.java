@@ -18,7 +18,7 @@ import java.text.Normalizer;
 import java.time.Duration;
 import java.util.Locale;
 
-public class PaginaCadastro {
+public class TesteCadastro {
     public static void main(String[] args) {
         FirefoxOptions opcoes = new FirefoxOptions();
         FirefoxProfile perfil = new FirefoxProfile();
