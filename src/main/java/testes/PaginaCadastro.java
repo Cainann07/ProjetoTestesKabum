@@ -128,41 +128,41 @@ public class PaginaCadastro {
 
             // Para validar o estado do formulário, pois só preencher os campos não basta
             campoSenha.sendKeys(Keys.TAB);
-            Thread.sleep(2000); // Aguarda o botão processar a liberação
+            Thread.sleep(2000);
 
 
             WebElement botaoContinuar = driver.findElement(By.xpath("//button[contains(., 'Continuar')]"));
             js.executeScript("arguments[0].removeAttribute('disabled');", botaoContinuar);
             js.executeScript("arguments[0].click();", botaoContinuar);
 
-            Thread.sleep(2000); // Aguarda o botão processar a liberação
+            Thread.sleep(2000);
 
             WebElement campoCep = espera.until(ExpectedConditions.elementToBeClickable(By.name("zipcode")));
             campoCep.sendKeys("01310900");
             System.out.println("input preenchido");
 
-            Thread.sleep(2000); // Aguarda o botão processar a liberação
+            Thread.sleep(2000);
 
             WebElement botaoContinuarAposCep = driver.findElement(By.xpath("//span[contains(., 'Confirmar')]"));
             botaoContinuarAposCep.click();
 
-            Thread.sleep(2000); // Aguarda o botão processar a liberação
+            Thread.sleep(2000);
 
             WebElement campoNumero = espera.until(ExpectedConditions.elementToBeClickable(By.name("number")));
             campoNumero.sendKeys("304");
             System.out.println("input preenchido");
 
-            Thread.sleep(2000); // Aguarda o botão processar a liberação
+            Thread.sleep(2000);
 
             WebElement campoComplemento = driver.findElement(By.name("complement"));
             campoComplemento.sendKeys("Condomínio Boa Vista");
 
-            Thread.sleep(2000); // Aguarda o botão processar a liberação
+            Thread.sleep(2000);
 
             WebElement campoReferencia = espera.until(ExpectedConditions.visibilityOfElementLocated(By.name("reference")));
             campoReferencia.sendKeys("Próximo a Padaria do Seu Chico");
 
-            Thread.sleep(2000); // Aguarda o botão processar a liberação
+            Thread.sleep(2000);
 
             WebElement botaoConfirmarAposComplemento = driver.findElement(By.xpath("//span[contains(., 'Confirmar')]"));
             botaoConfirmarAposComplemento.click();
