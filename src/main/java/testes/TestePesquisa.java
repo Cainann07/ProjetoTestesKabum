@@ -33,6 +33,8 @@ public class TestePesquisa {
 
             Thread.sleep(2000);
 
+            // Descrição produto solicitada
+
             btnHardware.sendKeys("Memoria Ram 16Gb" , Keys.ENTER);
 
             Thread.sleep(1000);
@@ -40,6 +42,8 @@ public class TestePesquisa {
             btnHardware.sendKeys(Keys.ENTER);
 
             Thread.sleep(10000);
+
+            // Acesso ao 1° Produto informado pelo site
 
             WebElement Anuncio01 = espera.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"listing\"]/div[3]/div/div/div[2]/div[1]/main/a[1]")));
             Anuncio01.click();
