@@ -45,16 +45,16 @@ public class TesteAdicaoCarrinho {
             botaoEntrarHeader.click();
 
             WebElement campoEmail = espera.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-testid='check-login-input']")));
-            campoEmail.sendKeys("pedro.a.silva03@gmail.com");
+            campoEmail.sendKeys("mateuscainan14@gmail.com");
             campoEmail.sendKeys(Keys.ENTER);
             Thread.sleep(1000);
 
             String senhaLogin = System.getenv("SENHA_LOGIN_KABUM");
             WebElement campoSenha = espera.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[type='password']")));
-            campoSenha.sendKeys("goiabaVERDE09");
+            campoSenha.sendKeys(senhaLogin);
             campoSenha.sendKeys(Keys.ENTER);
 
-            Thread.sleep(5000);
+            Thread.sleep(10000);
 
             WebElement btnHardware = espera.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"header-container\"]/header/div/div[2]/div[2]/div/div[2]/div[2]/a[1]")));
             btnHardware.click();
@@ -70,6 +70,11 @@ public class TesteAdicaoCarrinho {
 
             acoesMouse.moveToElement(adicionaProdutoAoCarrinho).click().perform();
             Thread.sleep(3000);
+
+            // Força a entrada na URL do carrinho para o servidor sincronizar os dados
+            driver.get("https://www.kabum.com.br/carrinho");
+
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
