@@ -30,10 +30,21 @@ public class TestePesquisa {
 
             WebElement btnHardware = espera.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputBusca")));
             btnHardware.click();
+
+            Thread.sleep(2000);
+
             btnHardware.sendKeys("Memoria Ram 16Gb" , Keys.ENTER);
+
+            Thread.sleep(1000);
+
+            btnHardware.sendKeys(Keys.ENTER);
+
+            Thread.sleep(10000);
 
             WebElement Anuncio01 = espera.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"listing\"]/div[3]/div/div/div[2]/div[1]/main/a[1]")));
             Anuncio01.click();
+
+            Thread.sleep(5000);
 
         } catch (InterruptedException e) {
             e.printStackTrace();
