@@ -32,6 +32,8 @@ public class TesteRemocaoCarrinho {
         opcoes.setProfile(perfil);
 
         WebDriver driver = new FirefoxDriver(opcoes);
+        org.openqa.selenium.interactions.Actions acoesMouse = new org.openqa.selenium.interactions.Actions(driver);
+
 
         try {
             driver.get("https://www.kabum.com.br");
@@ -49,6 +51,8 @@ public class TesteRemocaoCarrinho {
             WebElement botaoLogin = espera.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()='ENTRAR']")));
             botaoLogin.click();
 
+            Thread.sleep(2000);
+
             String senhaLogin = System.getenv("SENHA_LOGIN_KABUM");
             WebElement campoSenha = espera.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-testid='password-input']")));
             campoSenha.sendKeys(senhaLogin);
@@ -60,6 +64,21 @@ public class TesteRemocaoCarrinho {
 
             Thread.sleep(3000);
 
+            WebElement btnHardware = espera.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"header-container\"]/header/div/div[2]/div[2]/div/div[2]/div[2]/a[1]")));
+            btnHardware.click();
+
+            Thread.sleep(3000);
+
+            WebElement produtoSelecionado = espera.until(ExpectedConditions.elementToBeClickable(By.xpath("(//*[@id='listing']/div[3]/div/div/div[2]/div/main//a[contains(@href, '/produto/')])[2]")));
+            produtoSelecionado.click();
+
+            Thread.sleep(3000);
+
+            WebElement adicionaProdutoAoCarrinho = espera.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("button[aria-label='Adicionar ao carrinho']")));
+
+            acoesMouse.moveToElement(adicionaProdutoAoCarrinho).click().perform();
+            Thread.sleep(8000);
+
             WebElement iconeCarrinho = espera.until(ExpectedConditions.visibilityOfElementLocated(By.id("linkCarrinhoHeader")));
             iconeCarrinho.click();
 
@@ -69,6 +88,14 @@ public class TesteRemocaoCarrinho {
             excluirProdutos.click();
 
             Thread.sleep(3000);
+
+            WebElement botaoSim = espera.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[normalize-space(.)='Sim']")
+            ));
+
+            botaoSim.click();
+
+            Thread.sleep(5000);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
