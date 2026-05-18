@@ -12,22 +12,49 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-import static testes.TesteLogin.Login;
-
 public class TesteAdicaoCarrinho {
     public static void main(String[] args) {
+        FirefoxOptions opcoes = new FirefoxOptions();
 
-        WebDriver driver = DriverFactory.getDriver();
+        FirefoxProfile perfil = new FirefoxProfile();
+        // Para o site achar que é um usuário comum
+        perfil.setPreference("dom.webdriver.enabled", false);
+
+        // Impede que o Firefox carregue extensões internas de automação
+        perfil.setPreference("useAutomationExtension", false);
+
+        // Bloqueia Pop-ups
+        perfil.setPreference("dom.webnotifications.enabled", false);
+
+        // Abafa a detecção de que o navegador é controlado por automação
+        perfil.setPreference("general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0");
+
+        opcoes.setProfile(perfil);
+
+        WebDriver driver = new FirefoxDriver(opcoes);
 
         // Criação do Mouse Virtual
         org.openqa.selenium.interactions.Actions acoesMouse = new org.openqa.selenium.interactions.Actions(driver);
 
         try {
+            driver.get("https://www.kabum.com.br");
             WebDriverWait espera = new WebDriverWait(driver, Duration.ofSeconds(10));
+            Thread.sleep(5000);
 
-            Login(driver);
+            WebElement botaoEntrarHeader = espera.until(ExpectedConditions.elementToBeClickable(By.id("linkLoginHeader")));
+            botaoEntrarHeader.click();
 
+            WebElement campoEmail = espera.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-testid='check-login-input']")));
+            campoEmail.sendKeys("pedro.a.silva03@gmail.com");
+            campoEmail.sendKeys(Keys.ENTER);
             Thread.sleep(1000);
+
+            String senhaLogin = System.getenv("SENHA_LOGIN_KABUM");
+            WebElement campoSenha = espera.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[type='password']")));
+            campoSenha.sendKeys("goiabaVERDE09");
+            campoSenha.sendKeys(Keys.ENTER);
+
+            Thread.sleep(5000);
 
             WebElement btnHardware = espera.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"header-container\"]/header/div/div[2]/div[2]/div/div[2]/div[2]/a[1]")));
             btnHardware.click();
