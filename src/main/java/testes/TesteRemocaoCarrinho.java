@@ -45,24 +45,41 @@ public class TesteRemocaoCarrinho {
             acoesMouse.moveToElement(adicionaProdutoAoCarrinho).click().perform();
             Thread.sleep(5000);
 
-            WebElement iconeCarrinho = espera.until(ExpectedConditions.visibilityOfElementLocated(By.id("linkCarrinhoHeader")));
-            iconeCarrinho.click();
+            try {
 
-            Thread.sleep(3000);
+                WebElement entrarCarrinho = espera.until(ExpectedConditions.elementToBeClickable(By.xpath("/html/body/div[1]/div/div[3]/div[1]/div[3]/a")));
+                entrarCarrinho.click();
 
-            WebElement excluirProdutos = espera.until(ExpectedConditions.visibilityOfElementLocated(By.id("removerTodosProdutos")));
-            excluirProdutos.click();
+                WebElement excluirTodosOsProdutos = espera.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"removerTodosProdutos\"]")));
+                excluirTodosOsProdutos.click();
 
-            Thread.sleep(3000);
+                WebElement btnConfirmarExclusaoProdutos = espera.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/html/body/div[1]/main/div[1]/div[2]/div[1]/div[2]/section/div[1]/div[2]/div/button[2]")));
+                btnConfirmarExclusaoProdutos.click();
 
-            WebElement btnConfirmarExclusao = espera.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/html/body/div[1]/main/div[1]/div[2]/div[1]/div[2]/section/div[1]/div[2]/div/button[2]")));
-            btnConfirmarExclusao.click();
+            }catch ( Exception e){
+
+                WebElement iconeCarrinho = espera.until(ExpectedConditions.visibilityOfElementLocated(By.id("linkCarrinhoHeader")));
+                iconeCarrinho.click();
+
+                Thread.sleep(5000);
+
+                WebElement excluirProdutos = espera.until(ExpectedConditions.visibilityOfElementLocated(By.id("removerTodosProdutos")));
+                excluirProdutos.click();
+
+                Thread.sleep(3000);
+
+                WebElement btnConfirmarExclusao = espera.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/html/body/div[1]/main/div[1]/div[2]/div[1]/div[2]/section/div[1]/div[2]/div/button[2]")));
+                btnConfirmarExclusao.click();
+
+                Thread.sleep(3000);
+
+            };
 
             Thread.sleep(3000);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-           driver.quit();
+//           driver.quit();
         }
     }
 }
